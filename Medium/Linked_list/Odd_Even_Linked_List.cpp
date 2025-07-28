@@ -11,7 +11,7 @@ class Solution {
 public:
     ListNode* oddEvenList(ListNode* head)
     {
-        if (head == nullptr)
+        if (head == nullptr || head->next == nullptr)
             return head;
         int i;
         ListNode *origin;
@@ -21,11 +21,8 @@ public:
 
         origin = head;
         
-        if (origin->next == nullptr)
-        return origin;
-        
         i = 3;
-        odd = head;
+        odd = origin;
         even = origin->next;
         tempEven = even;
 
