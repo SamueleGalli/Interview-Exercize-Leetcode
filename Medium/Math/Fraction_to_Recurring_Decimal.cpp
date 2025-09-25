@@ -11,6 +11,7 @@ public:
         long int n = numerator;
         long int d = denominator;
         map<long,long> razional;
+        long start;
         string str_result;
 
         if (d == 0)
@@ -32,7 +33,7 @@ public:
         {
             if (razional.count(n))
             {
-                long start = razional[n];
+                start = razional[n];
                 str_result.insert(start, 1, '(');
                 str_result += ')';
                 
