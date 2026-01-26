@@ -40,11 +40,34 @@ Follow up:
 
 */
 
-#include <vector>
+using namespace std;
 
+#include <iostream>
+#include <vector>
+#include <algorithm>
 class Solution {
 public:
     int findDuplicate(vector<int>& nums) {
-        
+        sort(nums.begin(), nums.end());
+        for (size_t i = 0; i < nums.size(); i++)
+        {
+            if (i + 1 < nums.size())
+            {
+                if (nums[i] == nums[i + 1])
+                    return (nums[i]);
+            }
+        }
+        return (0);
     }
 };
+
+int main()
+{
+    Solution s;
+    vector<int> vec = {1,3,4,2,2};
+    cout << "result = " << s.findDuplicate(vec) << "\n------------------------------------------------------------\n";
+    vec = {3,1,3,4,2};
+    cout << "result = " << s.findDuplicate(vec) << "\n------------------------------------------------------------\n";
+    vec = {3,3,3,3,3};
+    cout << "result = " << s.findDuplicate(vec) << "\n------------------------------------------------------------\n";
+}
