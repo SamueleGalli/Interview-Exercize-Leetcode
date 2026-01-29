@@ -71,11 +71,7 @@ public:
         int start;
         for (int i = 0; i < static_cast<int>(nums.size()); i++)
         {
-            if (i - k + 1 < 0)
-                start = -1;
-            else
-                start = i - k + 1;
-            while (!aux.empty() && aux.back() < start)
+            while (!aux.empty() && aux.back() < i - k + 1)
                 aux.pop_back();
             while (!aux.empty() && nums[i] > nums[aux.front()])
                 aux.pop_front();
