@@ -45,6 +45,7 @@ Constraints:
 
 #include <stdlib.h>
 #include <iostream>
+#include <map>
 
 using namespace std;
 
@@ -63,20 +64,47 @@ public:
     }
 };
 
-// TODO Usare mappe di nodi(nodo originale->valori "nodo reale"->"nodo fittizio")
-
 class Solution
 {
 public:
+    void set_random(map<Node *, Node *> &randomizer, Node *head, Node *current)
+    {
+        while (head)
+        {
+            randomizer[head] = current;
+            head = head->next;
+            current = current->next;
+        }
+    }
+
+    void setting_nodes(Node *head, Node *&current)
+    {
+        while (head)
+        {
+            current->next = new Node(head->val);
+            current = current->next;
+            head = head->next;
+        }
+    }
+
     Node *copyRandomList(Node *head)
     {
+        if (!head)
+            return (nullptr);
+
         Node *result = new Node(head->val);
         Node *current = result;
-        
-        while (current)
+        map<Node *, Node *> randomizer;
+
+        setting_nodes(head->next, current);
+        current = result;
+        set_random(randomizer, head, current);
+        while (head)
         {
-            
+            if (head->random != nullptr)
+                current->random = randomizer.at(head->random);
             current = current->next;
+            head = head->next;
         }
         return (result);
     }
@@ -93,7 +121,6 @@ void print_nodes(Node *NewNode)
     while (NewNode != nullptr)
     {
         cout << "NewNode->val = " << NewNode->val << endl;
-        cout << "NewNode->random->value = " << NewNode->random->val << endl;
         NewNode = NewNode->next;
     }
     cout << "\n\nfine stampa\n\n";
@@ -122,11 +149,11 @@ int main()
     Node *Create_me;
 
     head = node1;
-    node1->random = node2;
-    node2->random = node4;
-    node3->random = node1;
-    node4->random = node5;
-    node5->random = node3;
+    node1->random = nullptr;
+    node2->random = node1;
+    node3->random = node4;
+    node4->random = node2;
+    node5->random = node1;
     node1->next = node2;
     node2->next = node3;
     node3->next = node4;
@@ -135,6 +162,9 @@ int main()
     Create_me = s.copyRandomList(head);
     print_nodes(head);
     print_nodes(Create_me);
-    Delete_lists(head);
     Delete_lists(Create_me);
+    Create_me = s.copyRandomList(head);
+    print_nodes(Create_me);
+    Delete_lists(Create_me);
+    Delete_lists(head);
 }
