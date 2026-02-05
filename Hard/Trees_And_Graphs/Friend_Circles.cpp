@@ -36,15 +36,87 @@ using namespace std;
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 class Solution
 {
 public:
+    void find_city(vector<vector<int>> &isConnected, size_t i, size_t j)
+    {
+        while (j < isConnected[i].size())
+        {
+            if (isConnected[i][j] == 1)
+            {
+                isConnected[i][j] = -1;
+                if (isConnected[j][i] == 1 && j != i)
+                {
+                    isConnected[j][i] = -1;
+                    find_city(isConnected, j, 0);
+                }
+            }
+            j++;
+        }
+    }
     int findCircleNum(vector<vector<int>> &isConnected)
     {
+        int city = 0;
+
+        for (size_t i = 0; i < isConnected.size(); i++)
+        {
+            for (size_t j = 0; j < isConnected[i].size(); j++)
+            {
+                if (isConnected[i][j] == 1)
+                {
+                    city++;
+                    find_city(isConnected, i, 0);
+                }
+            }
+        }
+        return (city);
     }
 };
 
 int main()
 {
+    Solution s;
+    int result;
+    vector<vector<int>> map;
+
+    map = {{1, 1, 0},
+           {1, 1, 0},
+           {0, 0, 1}};
+
+    result = s.findCircleNum(map);
+    cout << "resulted provinces = " << result << endl;
+
+    map = {{1, 0, 0},
+           {0, 1, 0},
+           {0, 0, 1}};
+
+    result = s.findCircleNum(map);
+    cout << "resulted provinces = " << result << endl;
+
+    map = {{1, 0, 1, 0},
+           {0, 1, 0, 1},
+           {1, 0, 1, 0},
+           {0, 1, 0, 1}};
+
+    result = s.findCircleNum(map);
+    cout << "resulted provinces = " << result << endl;
+
+    map = {{0, 1, 0, 1},
+           {1, 0, 1, 0},
+           {0, 1, 0, 1},
+           {1, 0, 1, 0}};
+
+    result = s.findCircleNum(map);
+    cout << "resulted provinces = " << result << endl;
+
+    map = {{1, 0, 0, 1},
+           {0, 1, 1, 0},
+           {0, 1, 1, 1},
+           {1, 0, 1, 1}};
+
+    result = s.findCircleNum(map);
+    cout << "resulted provinces = " << result << endl;
 }
