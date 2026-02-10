@@ -38,15 +38,86 @@ using namespace std;
 
 #include <iostream>
 #include <vector>
+#include <climits>
+#include <algorithm>
 
 class Solution
 {
 public:
+    void set_graph(vector<vector<int>> &graph, vector<vector<int>> &prerequisites)
+    {
+        for (size_t i = 0; i < prerequisites.size(); i++)
+        {
+            graph[prerequisites[i][1]].push_back(prerequisites[i][0]);
+        }
+    }
+    bool loop(vector<vector<int>> &graph, int course, vector<int> &state)
+    {
+        if (state[course] == 1)
+            return (false);
+        if (state[course] == 2)
+            return (true);
+
+        state[course] = 1;
+
+        for (size_t i = 0; i < graph[course].size(); i++)
+        {
+            if (!loop(graph, graph[course][i], state))
+                return (false);
+        }
+        state[course] = 2;
+        return (true);
+    }
     bool canFinish(int numCourses, vector<vector<int>> &prerequisites)
     {
+        vector<vector<int>> graph(numCourses);
+        vector<int> state(numCourses, 0);
+
+        set_graph(graph, prerequisites);
+        
+        for (int i = 0; i < numCourses; i++)
+        {
+            if (!loop(graph, i, state))
+                return (false);
+        }
+        return (true);
     }
 };
 
 int main()
 {
+    Solution s;
+    bool result;
+    vector<vector<int>> prerequisites;
+
+    prerequisites = {{1, 0}};
+    result = s.canFinish(2, prerequisites);
+    cout << boolalpha;
+    cout << "(result = " << result << " e deve essere true)\n\n\n";
+
+    prerequisites = {};
+    result = s.canFinish(1, prerequisites);
+    cout << "(result = " << result << " e deve essere true)\n\n\n";
+
+    prerequisites = {{1, 0}, {0, 1}};
+    result = s.canFinish(2, prerequisites);
+    cout << "(result = " << result << " e deve essere false)\n\n\n";
+
+    prerequisites = {{1, 0}, {2, 1}, {3, 1}, {4, 2}, {5, 3}};
+    result = s.canFinish(6, prerequisites);
+    cout << "(result = " << result << " e deve essere true)\n\n\n";
+
+    prerequisites = {{1, 0}, {2, 1}, {3, 1}, {4, 2}, {1, 5}};
+    result = s.canFinish(6, prerequisites);
+    cout << "(result = " << result << " e deve essere true)\n\n\n";
+
+    prerequisites = {{0, 1}};
+    result = s.canFinish(2, prerequisites);
+    cout << boolalpha;
+    cout << "(result = " << result << " e deve essere true)\n\n\n";
+
+    prerequisites = {{2, 1}, {1, 0}};
+    result = s.canFinish(3, prerequisites);
+    cout << boolalpha;
+    cout << "(result = " << result << " e deve essere true)\n\n\n";
 }
