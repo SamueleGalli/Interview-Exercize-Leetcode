@@ -38,8 +38,6 @@ using namespace std;
 
 #include <iostream>
 #include <vector>
-#include <climits>
-#include <algorithm>
 
 class Solution
 {
