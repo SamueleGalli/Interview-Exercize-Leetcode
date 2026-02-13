@@ -38,13 +38,6 @@ using namespace std;
 #include <iostream>
 #include <vector>
 
-void print_smaller(vector<int> result)
-{
-    cout << "\n\n IL RISULTATO \n\nE\n\n";
-    for (size_t i = 0; i < result.size(); i++)
-        cout << "result[" << i << "] = " << result[i] << endl;
-}
-//TODO binary search sbagliato
 class Solution
 {
 public:
@@ -55,39 +48,23 @@ public:
             ordered.push_back(number);
             return (0);
         }
-        else if (ordered.size() == 1)
-        {
-            if (number > ordered[0])
-            {
-                ordered.push_back(number);
-                return (1);
-            }
-            else
-            {
-                ordered.insert(ordered.begin(), number);
-                return (0);
-            }
-        }
 
-        size_t start = 0;
-        size_t end = (ordered.size() - 1);
-        size_t middle;
+        int start = 0;
+        int end = ordered.size() - 1;
+        int middle = (end + start) / 2;
+
         while (start < end)
         {
-            middle = end + start / 2;
-            //cout << number << " > " << ordered[middle] << "\n\n\n";
             if (number > ordered[middle])
                 start = middle + 1;
             else
                 end = middle - 1;
+            middle = (end + start) / 2;
         }
-        /*cout << "ordered[start] = " << ordered[start] << endl;
-        cout << "ordered[end] = " << ordered[end] << endl;
-        cout << "ordered[middle] = " << ordered[middle] << endl;*/
-        if (middle < start)
-            middle++;
-        ordered.insert(ordered.begin() + middle, number);
-        return (static_cast<int>(middle));
+        if (number > ordered[start])
+            start++;
+        ordered.insert(ordered.begin() + start, number);
+        return (start);
     }
 
     vector<int> countSmaller(vector<int> &nums)
@@ -102,11 +79,16 @@ public:
             i--;
             result[i] = binary_search(nums[i], ordered);
         } while (i != 0);
-        cout << "finale ordered\n";
-        print_smaller(ordered);
         return (result);
     }
 };
+
+void print_smaller(vector<int> result)
+{
+    cout << "\n\n IL RISULTATO \n\nE\n\n";
+    for (size_t i = 0; i < result.size(); i++)
+        cout << "result[" << i << "] = " << result[i] << endl;
+}
 
 int main()
 {
@@ -114,7 +96,12 @@ int main()
     vector<int> nums;
     vector<int> result;
 
-    /*nums = {5, 2, 6, 1};
+    nums = {5, 2};
+    result = s.countSmaller(nums);
+    print_smaller(result);
+    cout << "\n--------------------------------------------------------------------------------\n";
+
+    nums = {5, 2, 6, 1};
     result = s.countSmaller(nums);
     print_smaller(result);
     cout << "\n--------------------------------------------------------------------------------\n";
@@ -132,20 +119,19 @@ int main()
     nums = {-1, -1, 1, 0, -2};
     result = s.countSmaller(nums);
     print_smaller(result);
-    cout << "\n--------------------------------------------------------------------------------\n";*/
+    cout << "\n--------------------------------------------------------------------------------\n";
 
     nums = {0, 2, 1};
     result = s.countSmaller(nums);
     print_smaller(result);
     cout << "\n--------------------------------------------------------------------------------\n";
 
-    /*nums = {2, 0, 1};
+    nums = {2, 0, 1};
     result = s.countSmaller(nums);
     print_smaller(result);
 
     nums = {26, 78, 27, 100, 33, 67, 90, 23, 66, 5, 38, 7, 35, 23, 52, 22, 83, 51, 98,
             69, 81, 32, 78, 28, 94, 13, 2, 97, 3, 76, 99, 51, 9, 21, 84, 66, 65, 36, 100, 41};
-    nums = {97, 3, 76, 99, 51, 9, 21, 84, 66, 65, 36, 100, 41};
     result = s.countSmaller(nums);
-    print_smaller(result);*/
+    print_smaller(result);
 }
