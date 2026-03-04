@@ -20,7 +20,7 @@ Output: [2,3,1,3,1,2]
 
 Constraints:
 
-    * 1 <= nums.length <= 5 * 104
+    * 1 <= nums.length <= 5 * 10^4
     * 0 <= nums[i] <= 5000
     * It is guaranteed that there will be an answer for the given input nums.
 

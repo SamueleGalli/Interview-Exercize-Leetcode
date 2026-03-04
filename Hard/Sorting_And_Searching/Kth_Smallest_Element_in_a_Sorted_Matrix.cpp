@@ -41,56 +41,36 @@ using namespace std;
 #include <iostream>
 #include <vector>
 #include <queue>
-
+#include <tuple>
 class Solution
 {
-    /*
-    TODO riuscire a creare una priority_queue con (numero,righe,cella) cercando di non averlo bruttissimo
-    TODO capire meglio questa sintassi <int, vector<int>, greater<int>>
-    */
 public:
     int kthSmallest(vector<vector<int>> &matrix, int k)
     {
         int max = matrix[0][0];
-        int count = 1;
         size_t j = 0;
         size_t i = 0;
-        priority_queue<int, vector<int>, greater<int>> stack;
+        
+        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<tuple<int, int, int>>> stack;
         vector<vector<bool>> taken(matrix.size(), vector<bool>(matrix.size(), false));
 
         taken[0][0] = true;
-        while (1)
+        for (int count = 1; count < k; count++)
         {
-            /*
-                    {1, 5, 9},
-        {10, 11, 13},
-        {12, 13, 15}};
-            */
-            if (i + 1 < matrix.size() && j + 1 < matrix[i].size())
+            if (i + 1 < matrix.size() && !taken[i + 1][j])
             {
-                cout << "new max = " << max << endl;
-                if (!taken[i + 1][j])
-                {
-                    cout << "pusho nello stack (" << matrix[i + 1][j] << ")\n\n\n";
-                    stack.push(matrix[i + 1][j]);
-                    taken[i + 1][j] = true;
-                }
-                if (!taken[i][j + 1])
-                {
-                    cout << "pusho nello stack (" << matrix[i][j + 1] << ")\n\n\n";
-                    stack.push(matrix[i][j + 1]);
-                    taken[i][j + 1] = true;
-                }
-                max = stack.top();
-                stack.pop();
-                if (max == matrix[i][j + 1])
-                    j++;
-                else
-                    i++;
+                stack.push({matrix[i + 1][j], i + 1, j});
+                taken[i + 1][j] = true;
             }
-            count++;
-            if (count == k)
-                break;
+            if (j + 1 < matrix[i].size() && !taken[i][j + 1])
+            {
+                stack.push({matrix[i][j + 1], i, j + 1});
+                taken[i][j + 1] = true;
+            }
+            max = get<0>(stack.top());
+            i = get<1>(stack.top());
+            j = get<2>(stack.top());
+            stack.pop();
         }
         return (max);
     }
