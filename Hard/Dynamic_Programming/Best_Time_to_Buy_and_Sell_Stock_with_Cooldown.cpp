@@ -33,56 +33,43 @@ using namespace std;
 
 #include <iostream>
 #include <vector>
-#include <limits.h>
 
-/*
-Creare matrice risultati e stato (comprato o meno) credo?
-Capire perche funziona dopo la matrice perche facilita la comprensione
-*/
 class Solution
 {
 public:
-    int get_better_profit(vector<int> &prices, int buy, vector<int> &memo, size_t i = 0)
+    int get_better_profit(vector<int> &prices, vector<vector<int>> &memo,
+    size_t i = 0, bool buy = false)
     {
         if (i >= prices.size())
-        {
-            cout << "return 0\n\n";
             return (0);
-        }
+        if (buy && memo[1][i] != -1)
+            return (memo[1][i]);
+        else if (!buy && memo[0][i] != -1)
+            return (memo[0][i]);
 
-        if (memo[i] != -1)
-            return (memo[i]);
-        // se ho gia comprato avanzo i + 1
-        int skipping;
-        int best_offer;
+        int skipping, best_offer;
 
-        cout << "mi trovo al prezzo " << prices[i] << endl;
-        if (buy == INT_MIN)
+        if (!buy)
         {
-            cout << "ora di comprare\n\n";
-            // memo su compra
-            int taking = get_better_profit(prices, prices[i], memo, i + 1);
-            skipping = get_better_profit(prices, INT_MIN, memo, i + 1);
+            int taking = -prices[i] + get_better_profit(prices, memo, i + 1, true);
+            skipping = get_better_profit(prices, memo, i + 1);
             best_offer = max(taking, skipping);
-            //memo[i] = best_offer;
-            return (best_offer);
+            memo[0][i] = best_offer;
         }
         else
         {
-            cout << "ora di vendere\n\n";
-            int sold = prices[i] - buy + get_better_profit(prices, INT_MIN, memo, i + 2);
-            skipping = get_better_profit(prices, buy, memo, i + 1);
+            int sold = prices[i] + get_better_profit(prices, memo, i + 2);
+            skipping = get_better_profit(prices, memo, i + 1, true);
             best_offer = max(sold, skipping);
-            memo[i] = best_offer;
-            return (best_offer);
+            memo[1][i] = best_offer;
         }
+        return (best_offer);
     }
 
-    int
-    maxProfit(vector<int> &prices)
+    int maxProfit(vector<int> &prices)
     {
-        vector<int> memo(prices.size(), -1);
-        return (get_better_profit(prices, INT_MIN, memo));
+        vector<vector<int>> memo(3, vector<int>(prices.size(), -1));
+        return (get_better_profit(prices, memo));
     }
 };
 
@@ -92,15 +79,15 @@ int main()
     int result;
     vector<int> prices;
 
-    /*prices = {1};
+    prices = {1};
     result = s.maxProfit(prices);
-    cout << "---------------------------------------\nresult = (" << result << ")\n";*/
+    cout << "---------------------------------------\nresult = (" << result << ")\n";
 
     prices = {1, 2, 3, 4, 5};
     result = s.maxProfit(prices);
     cout << "---------------------------------------\nresult = (" << result << ")\n";
 
-    /*prices = {1, 2, 3, 0, 2};
+    prices = {1, 2, 3, 0, 2};
     result = s.maxProfit(prices);
     cout << "---------------------------------------\nresult = (" << result << ")\n";
 
@@ -118,5 +105,5 @@ int main()
 
     prices = {1, 3, 8, 2, 4, 0, 9, 6, 7, 2, 4, 6};
     result = s.maxProfit(prices);
-    cout << "---------------------------------------\nresult = (" << result << ")\n";*/
+    cout << "---------------------------------------\nresult = (" << result << ")\n";
 }
