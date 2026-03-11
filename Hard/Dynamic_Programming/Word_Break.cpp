@@ -42,33 +42,46 @@ using namespace std;
 class Solution
 {
 public:
-    size_t valid_word(string &s, vector<string> &dict, size_t i = 0, size_t word = 0, size_t words = 0)
+    bool valid_word(string &s, vector<string> &dict, vector<vector<int>> &memo, size_t i = 0, size_t word = 0, size_t words = 0)
     {
-        if (words == dict.size())
-            return (0);
+        if (words >= dict.size())
+            return (false);
+
+        if (word == 0 && memo[i][words] != -1)
+        {
+            if (memo[i][words] == 1)
+                return (true);
+            return (false);
+        }
+
+        if (i == s.size() && word == dict[words].size())
+            return (true);
 
         if (word == dict[words].size())
-            return (i);
+            return (valid_word(s, dict, memo, i));
 
-        if (s[i] == dict[words][word])
-            i = valid_word(s, dict, i + 1, word + 1, words);
-        else
-            i = valid_word(s, dict, i, word, words + 1);
-        return (i);
+        bool state = false;
+
+        if (i + (dict[words].size() - word) <= s.size() && s[i] == dict[words][word])
+            state = valid_word(s, dict, memo, i + 1, word + 1, words);
+
+        if (!state)
+            state = valid_word(s, dict, memo, i - word, 0, words + 1);
+
+        if (word == 0)
+        {
+            if (state == false)
+                memo[i][words] = 0;
+            else
+                memo[i][words] = 1;
+        }
+
+        return (state);
     }
     bool wordBreak(string s, vector<string> &wordDict)
     {
-        // vector<vector<string>> memo;
-        size_t i = 0;
-        while (i < s.size())
-        {
-            string my_word = s.substr(i);
-            size_t check = valid_word(my_word, wordDict);
-            if (check == 0)
-                return (false);
-            i += check;
-        }
-        return (true);
+        vector<vector<int>> memo(s.size(), vector<int>(wordDict.size(), -1));
+        return (valid_word(s, wordDict, memo));
     }
 };
 
@@ -104,11 +117,6 @@ int main()
     result = s.wordBreak(word, wordDict);
     cout << boolalpha << "result = " << result << endl;
 
-    word = "aaaaaaa";
-    wordDict = {"a", "aa", "aa"};
-    result = s.wordBreak(word, wordDict);
-    cout << boolalpha << "result = " << result << endl;
-
     word = "aaaaaaaaaaaaaaaaaaaa";
     wordDict = {"a", "aa", "aaa", "aaaa", "aaaaa"};
     result = s.wordBreak(word, wordDict);
@@ -124,9 +132,67 @@ int main()
     result = s.wordBreak(word, wordDict);
     cout << boolalpha << "result = " << result << endl;
 
+    word = "aaaaaaa";
+    wordDict = {"aaaa", "aa"};
+    result = s.wordBreak(word, wordDict);
+    cout << boolalpha << "result = " << result << endl;
+
     word = "cars";
     wordDict = {"car", "ca", "rs"};
     result = s.wordBreak(word, wordDict);
     cout << boolalpha << "result = " << result << endl;
-    //deve esplorare tutte le strade e fare true
+
+    word = "fohhemkkaecojceoaejkkoedkofhmohkcjmkggcmnami";
+    wordDict = {"kfomka", "hecagbngambii", "anobmnikj", "c",
+                "nnkmfelneemfgcl", "ah", "bgomgohl", "lcbjbg", "ebjfoiddndih", "hjknoamjbfhckb",
+                "eioldlijmmla", "nbekmcnakif", "fgahmihodolmhbi", "gnjfe", "hk", "b", "jbfgm",
+                "ecojceoaejkkoed", "cemodhmbcmgl", "j", "gdcnjj", "kolaijoicbc", "liibjjcini", "lmbenj",
+                "eklingemgdjncaa", "m", "hkh", "fblb", "fk", "nnfkfanaga", "eldjml", "iejn", "gbmjfdooeeko",
+                "jafogijka", "ngnfggojmhclkjd", "bfagnfclg", "imkeobcdidiifbm", "ogeo", "gicjog", "cjnibenelm",
+                "ogoloc", "edciifkaff", "kbeeg", "nebn", "jdd", "aeojhclmdn", "dilbhl", "dkk", "bgmck",
+                "ohgkefkadonafg", "labem", "fheoglj", "gkcanacfjfhogjc", "eglkcddd", "lelelihakeh",
+                "hhjijfiodfi", "enehbibnhfjd", "gkm", "ggj", "ag", "hhhjogk", "lllicdhihn", "goakjjnk",
+                "lhbn", "fhheedadamlnedh", "bin", "cl", "ggjljjjf", "fdcdaobhlhgj", "nijlf", "i", "gaemagobjfc",
+                "dg", "g", "jhlelodgeekj", "hcimohlni", "fdoiohikhacgb", "k", "doiaigclm", "bdfaoncbhfkdbjd",
+                "f", "jaikbciac", "cjgadmfoodmba", "molokllh", "gfkngeebnggo", "lahd", "n", "ehfngoc",
+                "lejfcee", "kofhmoh", "cgda", "de", "kljnicikjeh", "edomdbibhif", "jehdkgmmofihdi",
+                "hifcjkloebel", "gcghgbemjege", "kobhhefbbb", "aaikgaolhllhlm", "akg", "kmmikgkhnn",
+                "dnamfhaf", "mjhj", "ifadcgmgjaa", "acnjehgkflgkd", "bjj", "maihjn", "ojakklhl", "ign",
+                "jhd", "kndkhbebgh", "amljjfeahcdlfdg", "fnboolobch", "gcclgcoaojc", "kfokbbkllmcd",
+                "fec", "dljma", "noa", "cfjie", "fohhemkka", "bfaldajf", "nbk", "kmbnjoalnhki",
+                "ccieabbnlhbjmj", "nmacelialookal", "hdlefnbmgklo", "bfbblofk", "doohocnadd", "klmed",
+                "e", "hkkcmbljlojkghm", "jjiadlgf", "ogadjhambjikce", "bglghjndlk", "gackokkbhj",
+                "oofohdogb", "leiolllnjj", "edekdnibja", "gjhglilocif", "ccfnfjalchc", "gl", "ihee",
+                "cfgccdmecem", "mdmcdgjelhgk", "laboglchdhbk", "ajmiim", "cebhalkngloae", "hgohednmkahdi",
+                "ddiecjnkmgbbei", "ajaengmcdlbk", "kgg", "ndchkjdn", "heklaamafiomea", "ehg",
+                "imelcifnhkae", "hcgadilb", "elndjcodnhcc", "nkjd", "gjnfkogkjeobo", "eolega", "lm",
+                "jddfkfbbbhia", "cddmfeckheeo", "bfnmaalmjdb", "fbcg", "ko", "mojfj", "kk", "bbljjnnikdhg",
+                "l", "calbc", "mkekn", "ejlhdk", "hkebdiebecf", "emhelbbda", "mlba", "ckjmih", "odfacclfl",
+                "lgfjjbgookmnoe", "begnkogf", "gakojeblk", "bfflcmdko", "cfdclljcg", "ho", "fo", "acmi",
+                "oemknmffgcio", "mlkhk", "kfhkndmdojhidg", "ckfcibmnikn", "dgoecamdliaeeoa", "ocealkbbec",
+                "kbmmihb", "ncikad", "hi", "nccjbnldneijc", "hgiccigeehmdl", "dlfmjhmioa", "kmff",
+                "gfhkd", "okiamg", "ekdbamm", "fc", "neg", "cfmo", "ccgahikbbl", "khhoc", "elbg",
+                "cbghbacjbfm", "jkagbmfgemjfg", "ijceidhhajmja", "imibemhdg", "ja", "idkfd",
+                "ndogdkjjkf", "fhic", "ooajkki", "fdnjhh", "ba", "jdlnidngkfffbmi", "jddjfnnjoidcnm",
+                "kghljjikbacd", "idllbbn", "d", "mgkajbnjedeiee", "fbllleanknmoomb", "lom", "kofjmmjm",
+                "mcdlbglonin", "gcnboanh", "fggii", "fdkbmic", "bbiln", "cdjcjhonjgiagkb", "kooenbeoongcle", "cecnlfbaanckdkj", "fejlmog", "fanekdneoaammb", "maojbcegdamn", "bcmanmjdeabdo", "amloj",
+                "adgoej", "jh", "fhf", "cogdljlgek", "o", "joeiajlioggj", "oncal", "lbgg", "elainnbffk",
+                "hbdi", "femcanllndoh", "ke", "hmib", "nagfahhljh", "ibifdlfeechcbal", "knec",
+                "oegfcghlgalcnno", "abiefmjldmln", "mlfglgni", "jkofhjeb", "ifjbneblfldjel",
+                "nahhcimkjhjgb", "cdgkbn", "nnklfbeecgedie", "gmllmjbodhgllc", "hogollongjo",
+                "fmoinacebll", "fkngbganmh", "jgdblmhlmfij", "fkkdjknahamcfb", "aieakdokibj",
+                "hddlcdiailhd", "iajhmg", "jenocgo", "embdib", "dghbmljjogka", "bahcggjgmlf",
+                "fb", "jldkcfom", "mfi", "kdkke", "odhbl", "jin", "kcjmkggcmnami", "kofig",
+                "bid", "ohnohi", "fcbojdgoaoa", "dj", "ifkbmbod", "dhdedohlghk", "nmkeakohicfdjf",
+                "ahbifnnoaldgbj", "egldeibiinoac", "iehfhjjjmil", "bmeimi", "ombngooicknel",
+                "lfdkngobmik", "ifjcjkfnmgjcnmi", "fmf", "aoeaa", "an", "ffgddcjblehhggo",
+                "hijfdcchdilcl", "hacbaamkhblnkk", "najefebghcbkjfl", "hcnnlogjfmmjcma",
+                "njgcogemlnohl", "ihejh", "ej", "ofn", "ggcklj", "omah", "hg", "obk", "giig",
+                "cklna", "lihaiollfnem", "ionlnlhjckf", "cfdlijnmgjoebl", "dloehimen",
+                "acggkacahfhkdne", "iecd", "gn", "odgbnalk", "ahfhcd", "dghlag", "bchfe",
+                "dldblmnbifnmlo", "cffhbijal", "dbddifnojfibha", "mhh", "cjjol", "fed", "bhcnf",
+                "ciiibbedklnnk", "ikniooicmm", "ejf", "ammeennkcdgbjco", "jmhmd", "cek", "bjbhcmda",
+                "kfjmhbf", "chjmmnea", "ifccifn", "naedmco", "iohchafbega", "kjejfhbco", "anlhhhhg"};
+    result = s.wordBreak(word, wordDict);
+    cout << boolalpha << "result = " << result << endl;
 }
