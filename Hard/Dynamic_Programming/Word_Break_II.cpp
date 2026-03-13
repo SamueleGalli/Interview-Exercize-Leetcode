@@ -41,10 +41,54 @@ using namespace std;
 class Solution
 {
 public:
+    vector<string> take_words(string s, vector<string> &dict, vector<vector<string>> &memo, size_t i_s = 0)
+    {
+        vector<string> comb;
+        vector<string> taken;
+        string final;
+
+        if (i_s == s.size())
+            return (vector<string>{""});
+
+        if (!memo[i_s].empty())
+            return (memo[i_s]);
+
+        for (string words : dict)
+        {
+            if (words == s.substr(i_s, words.size()))
+            {
+                taken = take_words(s, dict, memo, i_s + words.size());
+                for (string take_me : taken)
+                {
+                    if (!take_me.empty())
+                        final = words + " " + take_me;
+                    else
+                        final = words;
+                    comb.push_back(final);
+                }
+            }
+        }
+        memo[i_s] = comb;
+        return (comb);
+    }
+
     vector<string> wordBreak(string s, vector<string> &wordDict)
     {
+        vector<vector<string>> memo(s.size());
+        return (take_words(s, wordDict, memo));
     }
 };
+
+void stamp_result(vector<string> &result)
+{
+    if (result.empty())
+        cout << "\n\nnothing in there\n\n";
+    for (size_t i = 0; i < result.size(); i++)
+    {
+        cout << "result[" << i << "] = " << result[i] << endl;
+    }
+    result.clear();
+}
 
 int main()
 {
@@ -52,4 +96,19 @@ int main()
     vector<string> result;
     string word;
     vector<string> wordDict;
+
+    word = "catsanddog";
+    wordDict = {"cat", "cats", "and", "sand", "dog"};
+    result = s.wordBreak(word, wordDict);
+    stamp_result(result);
+
+    word = "pineapplepenapple";
+    wordDict = {"apple", "pen", "applepen", "pine", "pineapple"};
+    result = s.wordBreak(word, wordDict);
+    stamp_result(result);
+
+    word = "catsandog";
+    wordDict = {"cats", "dog", "sand", "and", "cat"};
+    result = s.wordBreak(word, wordDict);
+    stamp_result(result);
 }
