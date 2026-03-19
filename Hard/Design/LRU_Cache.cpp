@@ -32,42 +32,159 @@ lRUCache.get(3);    // return 3
 lRUCache.get(4);    // return 4
 
 
+Your LRUCache object will be instantiated and called as such:
+LRUCache* obj = new LRUCache(capacity);
+int param_1 = obj->get(key);
+obj->put(key,value);
 
 Constraints:
 
-    1 <= capacity <= 3000
-    0 <= key <= 104
-    0 <= value <= 105
-    At most 2 * 105 calls will be made to get and put.
+    * 1 <= capacity <= 3000
+    * 0 <= key <= 104
+    * 0 <= value <= 105
+    * At most 2 * 105 calls will be made to get and put.
 
 */
 
 using namespace std;
 
-class LRUCache {
-public:
-    LRUCache(int capacity) {
-        
-    }
-    
-    int get(int key) {
-        
-    }
-    
-    void put(int key, int value) {
-        
+#include <iostream>
+#include <unordered_map>
+
+struct chace_list
+{
+    int val;
+    int key;
+
+    chace_list *prev;
+    chace_list *next;
+    chace_list()
+    {
+        val = -1;
+        key = -1;
+        next = nullptr;
+        prev = nullptr;
     }
 };
 
-/**
- * Your LRUCache object will be instantiated and called as such:
- * LRUCache* obj = new LRUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
+void print_list(chace_list *list)
+{
+    chace_list *head = list;
+    int size = 0;
+    cout << "\n---------------------------------------------------------------\n";
+    cout << "\n\n(";
+    while (head)
+    {
+        cout << "{" << head->key << ", " << head->val << "}, ";
+        size++;
+        head = head->next;
+    }
+    cout << ")\n\n";
+    cout << "la sua dimensione attuale e " << size << endl;
+    cout << "\n---------------------------------------------------------------\n";
+}
 
+class LRUCache
+{
+private:
+    unordered_map<int, chace_list *> chace;
+    chace_list *l_chace;
+    chace_list *tail_chace;
+
+    void get_chace(chace_list *node)
+    {
+        if (node == tail_chace)
+            return;
+
+        if (node->prev)
+            node->prev->next = node->next;
+        else
+            l_chace = node->next;
+        if (node->next)
+            node->next->prev = node->prev;
+        else
+            tail_chace = node->prev;
+
+        node->next = nullptr;
+        node->prev = tail_chace;
+        tail_chace->next = node;
+        tail_chace = node;
+        l_chace->prev = nullptr;
+    }
+
+public:
+    LRUCache(int capacity)
+    {
+
+        chace_list *temp = nullptr;
+        chace_list *prev_head = nullptr;
+
+        l_chace = new chace_list();
+
+        chace_list *head = l_chace;
+        for (int i = 1; i < capacity; i++)
+        {
+            temp = new chace_list();
+            head->next = temp;
+            prev_head = head;
+            head = head->next;
+            head->prev = prev_head;
+        }
+        tail_chace = head;
+    }
+
+    int get(int key)
+    {
+        if (chace.count(key))
+        {
+            this->get_chace(chace[key]);
+            chace_list *temp = chace[key];
+            return (temp->val);
+        }
+        else
+            return (-1);
+    }
+
+    void put(int key, int value)
+    {
+        if (chace.count(key))
+        {
+            chace_list *temp = chace[key];
+            temp->val = value;
+        }
+        else
+        {
+            if (l_chace->key != -1)
+                chace.erase(l_chace->key);
+            l_chace->key = key;
+            l_chace->val = value;
+            chace[key] = l_chace;
+        }
+        this->get_chace(chace[key]);
+    }
+    ~LRUCache()
+    {
+        chace_list *temp = nullptr;
+        while (l_chace)
+        {
+            temp = l_chace;
+            l_chace = l_chace->next;
+            delete temp;
+        }
+        l_chace = nullptr;
+    }
+};
 
 int main()
 {
-    LRUCache *LRU;
+    LRUCache *lRUCache = new LRUCache(2);
+    lRUCache->put(2, 1);
+    lRUCache->put(3, 2);
+    cout << "Cerco chiave 3 =" << lRUCache->get(3) << endl;
+    cout << "Cerco chiave 2 =" << lRUCache->get(2) << endl;
+    lRUCache->put(4, 3);
+    cout << "Cerco chiave 2 =" << lRUCache->get(2) << endl;
+    cout << "Cerco chiave 3 =" << lRUCache->get(3) << endl;
+    cout << "Cerco chiave 4 =" << lRUCache->get(4) << endl;
+    delete lRUCache;
 }
