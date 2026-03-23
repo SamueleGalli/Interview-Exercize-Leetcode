@@ -55,16 +55,7 @@ using namespace std;
 #include <iostream>
 #include <queue>
 #include <algorithm>
-/*
-TODO da rivedere e rimplementare cosi:
-* meta superiore max_heap (dal piu grande al piu piccolo)
-* meta inferiore min_heap (dal piu piccolo al piu grande)
-* dopo se la differenza e maggiore di 1
-* ovvero une dei 2 e a piu di 1 elemento in piu lo bilancio
-* bilancio spostando il top del heap piu grosso nell'altro
-* per la mediam sono i 2 topo diviso 2
-* per il caso dispari devo capire
-*/
+
 class MedianFinder
 {
 private:
@@ -78,10 +69,30 @@ public:
 
     void addNum(int num)
     {
+        if (max_heap.empty() || num >= max_heap.top())
+            max_heap.push(num);
+        else
+            min_heap.push(num);
+        if (max_heap.size() > min_heap.size() + 1)
+        {
+            min_heap.push(max_heap.top());
+            max_heap.pop();
+        }
+        else if (min_heap.size() > max_heap.size() + 1)
+        {
+            max_heap.push(min_heap.top());
+            min_heap.pop();
+        }
     }
 
     double findMedian()
     {
+        if (max_heap.size() > min_heap.size())
+            return (max_heap.top());
+        else if (min_heap.size() > max_heap.size())
+            return (min_heap.top());
+        else
+            return ((min_heap.top() + max_heap.top()) / 2.0);
     }
 
     ~MedianFinder()
@@ -172,6 +183,20 @@ int main()
         mid = obj->findMedian();
         cout << "il valore medio e = " << mid << endl;
         obj->addNum(1);
+        mid = obj->findMedian();
+        cout << "il valore medio e = " << mid << endl;
+        obj->addNum(3);
+        mid = obj->findMedian();
+        cout << "il valore medio e = " << mid << endl;
+        delete obj;
+    }
+    {
+        MedianFinder *obj = new MedianFinder();
+        cout << "----------------------------------------------\n";
+        obj->addNum(1);
+        mid = obj->findMedian();
+        cout << "il valore medio e = " << mid << endl;
+        obj->addNum(2);
         mid = obj->findMedian();
         cout << "il valore medio e = " << mid << endl;
         obj->addNum(3);
