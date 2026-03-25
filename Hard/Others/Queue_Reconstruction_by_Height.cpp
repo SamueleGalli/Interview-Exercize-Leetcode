@@ -38,16 +38,49 @@ using namespace std;
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 class Solution
 {
 public:
     vector<vector<int>> reconstructQueue(vector<vector<int>> &people)
     {
+        sort(people.begin(), people.end(), [](vector<int> &a, vector<int> &b) -> bool
+        {
+            bool height = a[0] > b[0];
+            bool front = a[0] == b[0] && a[1] < b[1];
+            return(height || front);
+        });
+        vector<vector<int>> final_queue;
+        for (size_t i = 0; i < people.size(); i++)
+        {
+            final_queue.insert(final_queue.begin() + people[i][1], people[i]);
+        }
+        return (final_queue);
     }
 };
+
+void print_queue(vector<vector<int>> &queue)
+{
+    cout << "\n-------------------------------------------------------\n";
+    for (size_t i = 0; i < queue.size(); i++)
+    {
+        cout << "queue[" << i << "] = {" << queue[i][0] << ", " << queue[i][1] << "};\n\n";
+    }
+    cout << "\n-------------------------------------------------------\n";
+}
 
 int main()
 {
     Solution s;
+    vector<vector<int>> people;
+    vector<vector<int>> queue;
+
+    people = {{7, 0}, {4, 4}, {7, 1}, {5, 0}, {6, 1}, {5, 2}};
+    queue = s.reconstructQueue(people);
+    print_queue(queue);
+
+    people = {{6, 0}, {5, 0}, {4, 0}, {3, 2}, {2, 2}, {1, 4}};
+    queue = s.reconstructQueue(people);
+    print_queue(queue);
 }
