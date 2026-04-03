@@ -22,3 +22,26 @@ Constraints:
     1 <= heights.length <= 10^5
     0 <= heights[i] <= 10^4
 */
+
+using namespace std;
+
+#include <vector>
+#include <iostream>
+
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        
+    }
+};
+
+int main()
+{
+    vector<int> heights;
+    Solution s;
+    int result;
+
+    heights;
+    result = s.largestRectangleArea(heights);
+    cout << "result = " << result << endl;
+}
