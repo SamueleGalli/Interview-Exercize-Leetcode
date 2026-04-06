@@ -76,12 +76,21 @@ int main()
     vector<int> heights;
     Solution s;
     int result;
+    
+    heights = {2};
+    result = s.largestRectangleArea(heights);
+    cout << "result = " << result << endl;
+    
+    heights = {2, 4};
+    result = s.largestRectangleArea(heights);
+    cout << "result = " << result << endl;
 
     heights = {2, 1, 5, 6, 2, 3};
     result = s.largestRectangleArea(heights);
     cout << "result = " << result << endl;
 
-    heights = {2, 4};
+    heights = {1,2,3,2,1,4,5,6,7,8,5,6,7,8,9,10,12,13,14,45};
     result = s.largestRectangleArea(heights);
     cout << "result = " << result << endl;
+
 }
